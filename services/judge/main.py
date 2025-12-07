@@ -43,7 +43,7 @@ online_model = anomaly.HalfSpaceTrees(
     seed=42
 )
 
-logging.info("🤖 Online Learning Model (River HalfSpaceTrees) initialized")
+logging.info(" Online Learning Model (River HalfSpaceTrees) initialized")
 
 # --- In-Memory Price Storage ---
 # A deque is used for efficient appends and pops from both ends
@@ -114,7 +114,7 @@ def detect_ai_anomaly(trade_data):
     # Update adaptive threshold every 100 ticks
     if tick_count % 100 == 0:
         anomaly_threshold = adaptive_threshold(scores_history)
-        logging.info(f"📊 Adaptive threshold updated: {anomaly_threshold:.4f}")
+        logging.info(f" Adaptive threshold updated: {anomaly_threshold:.4f}")
     
     # Learn from this tick (model adapts!)
     online_model.learn_one(features)
@@ -171,10 +171,10 @@ def detect_spoofing(price_data):
 if __name__ == "__main__":
     # Start Prometheus metrics server
     start_http_server(8002)
-    logging.info("📊 Prometheus metrics server started on port 8002")
+    logging.info(" Prometheus metrics server started on port 8002")
     
-    logging.info("🎯 Judge service starting - Online Learning Mode Active")
-    logging.info("🧠 Model will adapt to market conditions in real-time")
+    logging.info(" Judge service starting - Online Learning Mode Active")
+    logging.info(" Model will adapt to market conditions in real-time")
     logging.info(f"Consuming from: {CONSUMER_TOPIC}, Publishing to: {PRODUCER_TOPIC}")
     
     for message in consumer:
@@ -204,19 +204,19 @@ if __name__ == "__main__":
 
                 # Log progress
                 if tick_count % 100 == 0:
-                    logging.info(f"✅ Processed {tick_count} ticks | Lag: {lag_ms:.2f}ms | Price: ${price:.2f}")
+                    logging.info(f" Processed {tick_count} ticks | Lag: {lag_ms:.2f}ms | Price: ${price:.2f}")
 
                 # Run AI-based anomaly detection (Online Learning)
                 ai_alert = detect_ai_anomaly(trade_data)
                 if ai_alert:
-                    logging.warning(f"🚨 AI ANOMALY: {ai_alert['message']}")
+                    logging.warning(f" AI ANOMALY: {ai_alert['message']}")
                     producer.send(PRODUCER_TOPIC, value=ai_alert)
                     producer.flush()
 
                 # Run traditional rule-based fraud detection
                 rule_alert = detect_spoofing(price_history)
                 if rule_alert:
-                    logging.warning(f"⚠️  RULE-BASED ALERT: {rule_alert['message']}")
+                    logging.warning(f"  RULE-BASED ALERT: {rule_alert['message']}")
                     producer.send(PRODUCER_TOPIC, value=rule_alert)
                     producer.flush()
 

@@ -63,7 +63,7 @@ def init_database():
             SELECT create_hypertable('market_data', 'time', 
                                       if_not_exists => TRUE);
         """)
-        logger.info("✅ Hypertable 'market_data' created successfully")
+        logger.info(" Hypertable 'market_data' created successfully")
     except Exception as e:
         logger.warning(f"Hypertable might already exist: {e}")
     
@@ -75,7 +75,7 @@ def init_database():
     
     cursor.close()
     conn.close()
-    logger.info("🗄️  Database initialized successfully")
+    logger.info("  Database initialized successfully")
 
 
 def insert_batch(conn, batch):
@@ -100,7 +100,7 @@ def insert_batch(conn, batch):
         write_time = (time.time() - start_time) * 1000
         WRITE_LATENCY.set(write_time)
         
-        logger.info(f"📝 Wrote batch of {len(batch)} records in {write_time:.2f}ms")
+        logger.info(f" Wrote batch of {len(batch)} records in {write_time:.2f}ms")
     except Exception as e:
         logger.error(f"Error inserting batch: {e}")
         conn.rollback()
@@ -112,7 +112,7 @@ def main():
     """Main consumer loop."""
     # Start Prometheus metrics server
     start_http_server(8003)
-    logger.info("📊 Prometheus metrics server started on port 8003")
+    logger.info(" Prometheus metrics server started on port 8003")
     
     # Initialize database
     init_database()
@@ -135,7 +135,7 @@ def main():
         group_id='scribe-recorder'
     )
     
-    logger.info(f"🎯 Scribe started - Recording from '{KAFKA_TOPIC}' to TimescaleDB")
+    logger.info(f" Scribe started - Recording from '{KAFKA_TOPIC}' to TimescaleDB")
     
     batch = []
     last_batch_time = time.time()

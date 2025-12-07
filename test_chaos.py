@@ -75,7 +75,7 @@ class ChaosTestRunner:
                 
                 # Print result
                 timestamp = datetime.now().strftime("%H:%M:%S.%f")[:-3]
-                fraud_indicator = "🚨 FRAUD" if is_fraud else "✓ SAFE"
+                fraud_indicator = " FRAUD" if is_fraud else " SAFE"
                 print(f"{color}[{timestamp}] Request #{request_id:3d}: {status:<15} | "
                       f"Circuit: {circuit_state:<6} | {fraud_indicator} | "
                       f"{elapsed*1000:.0f}ms\033[0m")
@@ -97,7 +97,7 @@ class ChaosTestRunner:
             
             timestamp = datetime.now().strftime("%H:%M:%S.%f")[:-3]
             print(f"\033[91m[{timestamp}] Request #{request_id:3d}: {status:<15} | "
-                  f"Circuit: UNKNOWN | ⏱️  TIMEOUT | {elapsed*1000:.0f}ms\033[0m")
+                  f"Circuit: UNKNOWN | ⏱  TIMEOUT | {elapsed*1000:.0f}ms\033[0m")
             
             return result
             
@@ -137,14 +137,14 @@ class ChaosTestRunner:
     async def run(self):
         """Run the chaos test."""
         print("\n" + "="*80)
-        print("🔥 SENTINEL CHAOS TEST - Circuit Breaker Demonstration 🔥")
+        print(" SENTINEL CHAOS TEST - Circuit Breaker Demonstration ")
         print("="*80)
         print(f"Target URL: {self.base_url}")
         print(f"Total Requests: {self.num_requests}")
         print(f"Concurrent Workers: {self.workers}")
         print(f"Started at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
         print("="*80)
-        print("\n💡 TIP: Kill the brain container now to see circuit breaker in action!")
+        print("\n TIP: Kill the brain container now to see circuit breaker in action!")
         print("   Docker: docker-compose stop brain")
         print("   K8s: kubectl scale deployment sentinel-brain --replicas=0\n")
         
@@ -180,7 +180,7 @@ class ChaosTestRunner:
         total_time = time.time() - self.start_time
         
         print("\n" + "="*80)
-        print("📊 TEST SUMMARY")
+        print(" TEST SUMMARY")
         print("="*80)
         
         # Count statuses
@@ -209,32 +209,32 @@ class ChaosTestRunner:
         print(f"\nTotal Requests Sent: {total_requests}")
         print(f"Total Time: {total_time:.2f}s")
         print(f"Requests/Second: {total_requests/total_time:.2f}")
-        print(f"\n✅ Successful: {success_count} ({success_count/total_requests*100:.1f}%)")
-        print(f"⚠️  Circuit Open (Fail-Open): {circuit_open_count} ({circuit_open_count/total_requests*100:.1f}%)")
-        print(f"⏱️  Timeouts: {timeout_count} ({timeout_count/total_requests*100:.1f}%)")
-        print(f"❌ Errors: {error_count} ({error_count/total_requests*100:.1f}%)")
+        print(f"\n Successful: {success_count} ({success_count/total_requests*100:.1f}%)")
+        print(f"  Circuit Open (Fail-Open): {circuit_open_count} ({circuit_open_count/total_requests*100:.1f}%)")
+        print(f"⏱  Timeouts: {timeout_count} ({timeout_count/total_requests*100:.1f}%)")
+        print(f" Errors: {error_count} ({error_count/total_requests*100:.1f}%)")
         
-        print(f"\n🔄 Circuit Breaker States:")
+        print(f"\n Circuit Breaker States:")
         for state, count in circuit_counter.most_common():
             print(f"   {state}: {count} ({count/total_requests*100:.1f}%)")
         
-        print(f"\n⚡ Response Times:")
+        print(f"\n Response Times:")
         print(f"   Average: {avg_response_time*1000:.0f}ms")
         print(f"   Min: {min_response_time*1000:.0f}ms")
         print(f"   Max: {max_response_time*1000:.0f}ms")
         
-        print(f"\n🚨 Fraud Detection:")
+        print(f"\n Fraud Detection:")
         print(f"   Flagged as Fraud: {fraud_count}/{total_requests} ({fraud_count/total_requests*100:.1f}%)")
         
         print("\n" + "="*80)
         
         # Verdict
         if circuit_open_count > 0:
-            print("✅ SUCCESS: Circuit breaker activated! System failed open gracefully.")
+            print(" SUCCESS: Circuit breaker activated! System failed open gracefully.")
         elif success_rate > 95:
-            print("✅ SUCCESS: All requests processed successfully.")
+            print(" SUCCESS: All requests processed successfully.")
         else:
-            print("⚠️  WARNING: Some requests failed. Check logs for details.")
+            print("  WARNING: Some requests failed. Check logs for details.")
         
         print("="*80 + "\n")
 
@@ -269,7 +269,7 @@ def main():
     try:
         asyncio.run(runner.run())
     except KeyboardInterrupt:
-        print("\n\n⚠️  Test interrupted by user")
+        print("\n\n  Test interrupted by user")
         if runner.results:
             runner.print_summary()
 

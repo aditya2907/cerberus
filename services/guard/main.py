@@ -181,7 +181,7 @@ async def replay_historical_data(
         cursor.close()
         conn.close()
         
-        logging.info(f"📼 Replay request: {len(results)} records from {start_time} to {end_time} at {speed}x speed")
+        logging.info(f" Replay request: {len(results)} records from {start_time} to {end_time} at {speed}x speed")
         
         return {
             "status": "success",

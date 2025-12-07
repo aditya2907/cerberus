@@ -17,7 +17,7 @@ producer = KafkaProducer(
 )
 
 async def binance_listener():
-    print(f"🏹 Hunter connecting to Binance Stream: {BINANCE_WS_URL}")
+    print(f" Hunter connecting to Binance Stream: {BINANCE_WS_URL}")
     
     async with websockets.connect(BINANCE_WS_URL) as websocket:
         while True:
@@ -36,7 +36,7 @@ async def binance_listener():
                 }
                 
                 # 3. Log it (so you see it working)
-                print(f"⚡ Trade: {payload['symbol']} @ {payload['price']}")
+                print(f" Trade: {payload['symbol']} @ {payload['price']}")
                 
                 # 4. Push to Kafka
                 producer.send(KAFKA_TOPIC, payload)

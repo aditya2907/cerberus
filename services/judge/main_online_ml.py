@@ -33,7 +33,7 @@ model = anomaly.HalfSpaceTrees(
     seed=42
 )
 
-logger.info("🤖 Online Learning Model (River HalfSpaceTrees) initialized")
+logger.info(" Online Learning Model (River HalfSpaceTrees) initialized")
 
 # Kafka Consumer
 consumer = KafkaConsumer(
@@ -94,7 +94,7 @@ def publish_alert(tick, score, reason):
     }
     
     producer.send(OUTPUT_TOPIC, value=alert)
-    logger.info(f"🚨 ANOMALY DETECTED: {alert['symbol']} - Score: {score:.4f}")
+    logger.info(f" ANOMALY DETECTED: {alert['symbol']} - Score: {score:.4f}")
     ANOMALIES_DETECTED.inc()
 
 
@@ -125,7 +125,7 @@ def process_tick(tick):
         # Update adaptive threshold every 100 ticks
         if tick_count % 100 == 0:
             anomaly_threshold = adaptive_threshold(scores_history)
-            logger.info(f"📊 Adaptive threshold updated: {anomaly_threshold:.4f}")
+            logger.info(f" Adaptive threshold updated: {anomaly_threshold:.4f}")
         
         # Check for anomaly
         if score > anomaly_threshold:
@@ -145,7 +145,7 @@ def process_tick(tick):
         PROCESSING_TIME.observe(processing_time)
         
         if tick_count % 100 == 0:
-            logger.info(f"✅ Processed {tick_count} ticks | Last score: {score:.4f} | Lag: {lag_ms:.2f}ms")
+            logger.info(f" Processed {tick_count} ticks | Last score: {score:.4f} | Lag: {lag_ms:.2f}ms")
     
     except Exception as e:
         logger.error(f"Error processing tick: {e}", exc_info=True)
@@ -155,10 +155,10 @@ def main():
     """Main consumer loop."""
     # Start Prometheus metrics server
     start_http_server(8002)
-    logger.info("📊 Prometheus metrics server started on port 8002")
+    logger.info(" Prometheus metrics server started on port 8002")
     
-    logger.info("🎯 Judge service started - Online Learning Mode Active")
-    logger.info("🧠 Model will adapt to market conditions in real-time")
+    logger.info(" Judge service started - Online Learning Mode Active")
+    logger.info(" Model will adapt to market conditions in real-time")
     
     try:
         for message in consumer:

@@ -86,7 +86,7 @@ if __name__ == "__main__":
     # Start Prometheus metrics server in a separate thread
     def start_metrics_server():
         start_http_server(8001)
-        logging.info("📊 Prometheus metrics server started on port 8001")
+        logging.info(" Prometheus metrics server started on port 8001")
     
     metrics_thread = threading.Thread(target=start_metrics_server, daemon=True)
     metrics_thread.start()
@@ -94,7 +94,7 @@ if __name__ == "__main__":
     if not ALPACA_API_KEY or not ALPACA_SECRET_KEY:
         logging.error("Alpaca API Key or Secret Key not found. Please set them in the .env file.")
     else:
-        logging.info(f"🎯 Hunter service starting. Subscribing to trades for symbol: {SYMBOL}")
+        logging.info(f" Hunter service starting. Subscribing to trades for symbol: {SYMBOL}")
         # Subscribe to the trade handler
         wss_client.subscribe_trades(on_trade, SYMBOL)
         # Start the WebSocket client
