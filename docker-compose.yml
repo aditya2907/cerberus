@@ -1,0 +1,147 @@
+version: '3.8'
+
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.0.1
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+
+  kafka:
+    image: confluentinc/cp-kafka:7.0.1
+    container_name: kafka
+    ports:
+      - "9092:9092"
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092,PLAINTEXT_INTERNAL://kafka:29092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+
+  hunter:
+    build:
+      context: ./services/hunter
+    container_name: hunter
+    depends_on:
+      - kafka
+    environment:
+      - KAFKA_BROKER_URL=kafka:29092
+      - ALPACA_KEY=${ALPACA_KEY}
+      - ALPACA_SECRET=${ALPACA_SECRET}
+    restart: always
+
+  judge:
+    build:
+      context: ./services/judge
+    container_name: judge
+    depends_on:
+      - kafka
+    environment:
+      - KAFKA_BROKER_URL=kafka:29092
+    restart: always
+
+  guard:
+    build:
+      context: ./services/guard
+    container_name: guard
+    ports:
+      - "8000:8000"
+    depends_on:
+      - kafka
+    environment:
+      - KAFKA_BROKER_URL=kafka:29092
+    restart: always
+
+  dashboard:
+    build:
+      context: ./dashboard
+    container_name: dashboard
+    ports:
+      - "5173:80"
+    depends_on:
+      - guard
+    restart: always
+
+  # TimescaleDB for historical data storage
+  timescaledb:
+    image: timescale/timescaledb:latest-pg14
+    container_name: timescaledb
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: cerberus
+      POSTGRES_USER: cerberus_user
+      POSTGRES_PASSWORD: cerberus_pass
+    volumes:
+      - timescaledb-data:/var/lib/postgresql/data
+    restart: always
+
+  # The Scribe - Records market data to TimescaleDB
+  scribe:
+    build:
+      context: ./services/scribe
+    container_name: scribe
+    depends_on:
+      - kafka
+      - timescaledb
+    environment:
+      - KAFKA_BROKER_URL=kafka:29092
+      - POSTGRES_HOST=timescaledb
+      - POSTGRES_DB=cerberus
+      - POSTGRES_USER=cerberus_user
+      - POSTGRES_PASSWORD=cerberus_pass
+    restart: always
+
+  # Prometheus for metrics collection
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    volumes:
+      - ./infra/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus-data:/prometheus
+    ports:
+      - "9090:9090"
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+    restart: always
+
+  # Grafana for metrics visualization
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    depends_on:
+      - prometheus
+    ports:
+      - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=cerberus
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./infra/grafana/provisioning:/etc/grafana/provisioning
+    restart: always
+
+  # Kafka Exporter for Kafka metrics
+  kafka-exporter:
+    image: danielqsj/kafka-exporter:latest
+    container_name: kafka-exporter
+    depends_on:
+      - kafka
+    command:
+      - '--kafka.server=kafka:29092'
+    ports:
+      - "9308:9308"
+    restart: always
+
+volumes:
+  timescaledb-data:
+  prometheus-data:
+  grafana-data:

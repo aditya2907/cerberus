@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: sentinel-brain
+  labels:
+    app: sentinel-brain
+    tier: ml-inference
+spec:
+  type: ClusterIP
+  selector:
+    app: sentinel-brain
+  ports:
+  - port: 50051
+    targetPort: 50051
+    protocol: TCP
+    name: grpc
+  sessionAffinity: None

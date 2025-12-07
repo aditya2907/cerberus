@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sentinel-gateway
+  labels:
+    app: sentinel-gateway
+    tier: api-gateway
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: sentinel-gateway
+  template:
+    metadata:
+      labels:
+        app: sentinel-gateway
+        tier: api-gateway
+    spec:
+      containers:
+      - name: gateway
+        image: sentinel-fraud-engine-gateway:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8000
+          name: http
+          protocol: TCP
+        env:
+        - name: BRAIN_SERVICE_HOST
+          value: "sentinel-brain"
+        - name: BRAIN_SERVICE_PORT
+          value: "50051"
+        - name: MONGODB_URL
+          value: "mongodb://sentinel:sentinel_password@sentinel-db:27017/fraud_ledger?authSource=admin"
+        resources:
+          requests:
+            cpu: 250m
+            memory: 256Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 15
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3

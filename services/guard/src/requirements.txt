@@ -1,0 +1,9 @@
+fastapi==0.109.0
+uvicorn[standard]==0.27.0
+grpcio>=1.60.0
+grpcio-tools>=1.62.0
+protobuf>=5.26.1
+pybreaker==0.6.0
+python-dotenv
+loguru
+motor

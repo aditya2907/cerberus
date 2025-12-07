@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: sentinel-db
+  labels:
+    app: sentinel-db
+    tier: database
+spec:
+  type: ClusterIP
+  selector:
+    app: sentinel-db
+  ports:
+  - port: 27017
+    targetPort: 27017
+    protocol: TCP
+    name: mongodb
+  clusterIP: None  # Headless service for StatefulSet

@@ -1,0 +1,64 @@
+{
+  "dashboard": {
+    "title": "Cerberus System Health",
+    "panels": [
+      {
+        "id": 1,
+        "title": "Hunter Throughput (ticks/sec)",
+        "targets": [
+          {
+            "expr": "rate(ticks_processed_total{service=\"hunter\"}[1m])"
+          }
+        ],
+        "type": "graph",
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0}
+      },
+      {
+        "id": 2,
+        "title": "Judge Processing Lag (ms)",
+        "targets": [
+          {
+            "expr": "judge_processing_lag_ms"
+          }
+        ],
+        "type": "graph",
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0}
+      },
+      {
+        "id": 3,
+        "title": "Kafka Messages Per Second",
+        "targets": [
+          {
+            "expr": "rate(kafka_server_brokertopicmetrics_messagesin_total[1m])"
+          }
+        ],
+        "type": "graph",
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8}
+      },
+      {
+        "id": 4,
+        "title": "Anomalies Detected",
+        "targets": [
+          {
+            "expr": "anomalies_detected_total"
+          }
+        ],
+        "type": "stat",
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8}
+      },
+      {
+        "id": 5,
+        "title": "Service CPU Usage",
+        "targets": [
+          {
+            "expr": "rate(process_cpu_seconds_total[1m])"
+          }
+        ],
+        "type": "graph",
+        "gridPos": {"h": 8, "w": 24, "x": 0, "y": 16}
+      }
+    ],
+    "schemaVersion": 16,
+    "version": 0
+  }
+}

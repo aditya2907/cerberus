@@ -1,0 +1,4 @@
+alpaca-py
+kafka-python
+python-dotenv
+prometheus-client

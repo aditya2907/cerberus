@@ -1,0 +1,6 @@
+fastapi
+uvicorn[standard]
+kafka-python
+python-dotenv
+psycopg2-binary
+prometheus-client

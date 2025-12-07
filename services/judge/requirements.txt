@@ -1,0 +1,6 @@
+kafka-python
+numpy
+python-dotenv
+river
+prometheus-client
+psycopg2-binary
